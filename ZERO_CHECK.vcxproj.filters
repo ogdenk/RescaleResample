@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Visual Studio\RescaleResample\CMakeFiles\a1b73508878a13b922affaaa68729bb4\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{4F4D6423-04BF-4080-9F78-32EDEE6B430A}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
