@@ -25,7 +25,7 @@
 int main(int argc, char * argv[])
 {
   const unsigned int Dimension = 3;
-  size_t foundchar;  // for fileNameNoExt parsing
+  size_t foundchar;  // for fileName parsing
   unsigned short int labelValue; // holds the current label value during the loop
   float sum=0, mean=0, factor=1;  // used for rescaling the MRI 
   bool interpolate = false;
@@ -36,7 +36,7 @@ int main(int argc, char * argv[])
   int i = 0;  // just a counter
   
   // the file names for the brain scan, label image, and output file
-  std::string inputImageFile, fileNameNoExt, inputLabelFile, Path, outputLabelFile, outputImageFile;
+  std::string inputImageFile, fileName, inputLabelFile, Path, outputLabelFile, outputImageFile;
   
   ImageType::SizeType medianRadius; // used for binary median image filter
   medianRadius[0] = 1;
@@ -76,12 +76,12 @@ int main(int argc, char * argv[])
   foundchar = inputImageFile.find_last_of("/\\");
   Path = inputImageFile.substr(0, foundchar+1);
 
-  fileNameNoExt = inputImageFile.substr(foundchar + 1);
-  foundchar = fileNameNoExt.find_last_of(".");
-  inputLabelFile = Path + fileNameNoExt.substr(0, foundchar) +"_label.nrrd";
+  fileName = inputImageFile.substr(foundchar + 1);
+  foundchar = fileName.find_last_of(".");
+  inputLabelFile = Path + fileName.substr(0, foundchar) +"_label.nrrd";
 
-  outputLabelFile = Path + fileNameNoExt.substr(0, foundchar) + "_rescaled_label.nrrd";
-  outputImageFile = Path + fileNameNoExt.substr(0, foundchar) + "_rescaled.nrrd";
+  outputLabelFile = Path + fileName.substr(0, foundchar) + "_rescaled_label.nrrd";
+  outputImageFile = Path + fileName.substr(0, foundchar) + "_rescaled.nrrd";
 
   // open the image data
   typedef itk::ImageFileReader< ImageType >  ReaderType;
@@ -139,6 +139,7 @@ int main(int argc, char * argv[])
 
   typedef itk::ImageFileWriter<ImageType> WriterType;
   WriterType::Pointer writer = WriterType::New();
+  writer->SetUseCompression(true);
   writer->SetFileName(outputLabelFile);
   
   if(interpolate)
@@ -160,7 +161,10 @@ int main(int argc, char * argv[])
   MedianFilterType::Pointer medianFilter = MedianFilterType::New();
   medianFilter->SetRadius(medianRadius);
   medianFilter->SetBackgroundValue(0);
-  medianFilter->SetInput(resampler->GetOutput());
+  if (interpolate)
+	  medianFilter->SetInput(resampler->GetOutput());
+  else
+	  medianFilter->SetInput(labelReader->GetOutput());
 
   //  Statistics filter to get the gray level statistics from the MRI image for a particular label location
   typedef itk::BinaryImageToStatisticsLabelMapFilter<ImageType, ImageType> BinaryImageToStatisticsLabelMapFilterType;
